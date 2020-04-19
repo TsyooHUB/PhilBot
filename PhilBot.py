@@ -26,12 +26,11 @@ class Register:
         return self.balance
 
 
-# not used
-def philbank_contains_id(self, id):
+def get_user_register(user_id):
     for register in philbank:
-        if register.get_id() == id:
-            return True
-    return False
+        if register.get_id() == user_id:
+            return f"User: {get_name_from_users(register.get_id())}, Balance: {register.get_balance()}"
+    return "Philbank not found"
 
 
 def add_philcoin(user_id, amount):
@@ -64,6 +63,25 @@ def save_philbank():
         for register in philbank:
             f.write("{'Name': '" + get_name_from_users(register.get_id()) + "','UserId': " + str(register.get_id())
                     + ",'Balance': " + str(register.get_balance()) + "}\n")
+
+
+def process_command(command):
+    if command.author.id == client.user.id:
+        return False
+    try:
+        if command.content.index(BOT_PREFIX) == 0:
+            return command.content[1:]
+    except ValueError:
+        return False
+    print(f'Weird command failure: {command.content}')
+    return False
+
+
+@client.event
+async def on_message(message):
+    command = process_command(message)
+    if command == "philbalance":
+        await message.author.send(get_user_register(message.author.id))
 
 
 @client.event

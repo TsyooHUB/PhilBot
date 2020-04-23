@@ -76,6 +76,8 @@ def process_command(command):
     try:
         if command.content.index(BOT_PREFIX) == 0:
             return command.content[1:]
+        else:
+            return False
     except ValueError:
         return False
     print(f'Weird command failure: {command.content}')

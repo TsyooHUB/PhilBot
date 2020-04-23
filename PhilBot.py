@@ -1,18 +1,14 @@
-import io
 import aiohttp
 import discord
-from Philbank import start_bank, add_philcoin, get_philcoin_balance
+import io
 
-from PIL import Image
+from ImageHandler import juan_processing
+from Philbank import start_bank, add_philcoin, get_philcoin_balance
 
 BOT_PREFIX = ("!")
 TOKEN = ''
 
 client = discord.Client()
-
-COORDS = [(631, 551), (990, 550), (634, 308), (980, 339)]
-COEFFS = [0.6547747129877984, 0.008083638431858402, -1670.4677146851654, -0.05607509889913542,
-          0.6258704586809742, -628.8659542867306, -7.95610829238863e-05, 4.137514033619954e-05]
 
 
 def get_name_from_user_id(user_id):
@@ -36,25 +32,6 @@ def process_command(command):
     return False
 
 
-def process_image(buffer):
-    width, height = 1219, 684
-    im = Image.open(buffer).convert(mode='RGBA')
-    im = im.resize((width, height), resample=Image.ANTIALIAS)
-    bg = Image.open('data/img/juan_bg.png').convert(mode='RGBA')
-    im = im.transform((width * 4, height * 4), Image.PERSPECTIVE, COEFFS, Image.BICUBIC)
-    im = im.resize((bg.width, bg.height), resample=Image.ANTIALIAS)
-
-    bg = Image.alpha_composite(bg, im)
-
-    fg = Image.open('data/img/juan_fg.png').convert(mode='RGBA')
-    bg = Image.alpha_composite(bg, fg)
-
-    output = io.BytesIO()
-    bg.save(output, format='png')
-    output.seek(0)
-    return output
-
-
 @client.event
 async def on_message(message):
     command = process_command(message)
@@ -70,7 +47,7 @@ async def on_message(message):
             async with session.get(command[1]) as resp:
                 buffer = io.BytesIO(await resp.read())
 
-        await message.channel.send(file=discord.File(fp=process_image(buffer), filename="image.png"))
+        await message.channel.send(file=discord.File(fp=juan_processing(buffer), filename="image.png"))
 
 
 @client.event

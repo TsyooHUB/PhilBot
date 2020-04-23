@@ -1,5 +1,4 @@
 import io
-import discord
 import aiohttp
 import discord
 import os.path
@@ -104,14 +103,12 @@ def process_image(buffer):
 @client.event
 async def on_message(message):
     proc = process_command(message)
-    if proc != False:
+    if proc:
         command = proc.split()
         if command[0] == "philbalance":
             await message.author.send(get_user_register(message.author.id))
         if command[0] == "juan":
-            # in an async function, such as an on_message handler or command
             async with aiohttp.ClientSession() as session:
-                # note that it is often preferable to create a single session to use multiple times later - see below for this.
                 async with session.get(command[1]) as resp:
                     buffer = io.BytesIO(await resp.read())
 

@@ -1,4 +1,5 @@
 token = ''
+prefix = "!"
 
 try:
     token = [line.rstrip('\n') for line in open('data/.token.txt')][0]

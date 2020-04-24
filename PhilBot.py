@@ -5,8 +5,8 @@ import config
 import Philbank
 from ImageHandler import juan_processing
 
-BOT_PREFIX = ("!")
-TOKEN = config.token
+prefix = config.prefix
+token = config.token
 
 client = discord.Client()
 
@@ -22,7 +22,7 @@ def process_command(command):
     if command.author.id == client.user.id:
         return False
     try:
-        if command.content.index(BOT_PREFIX) == 0:
+        if command.content.index(prefix) == 0:
             return command.content[1:].split()
         else:
             return False
@@ -66,4 +66,4 @@ async def on_ready():
             Philbank.add_register(Philbank.Register(get_name_from_user_id(user.id), user.id, 0))
     Philbank.save_philbank()
 
-client.run(TOKEN)
+client.run(token)

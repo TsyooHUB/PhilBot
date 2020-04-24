@@ -1,12 +1,13 @@
 import aiohttp
 import discord
 import io
+import config
 
 from ImageHandler import juan_processing
 from Philbank import start_bank, add_philcoin, get_philcoin_balance
 
 BOT_PREFIX = ("!")
-TOKEN = ''
+TOKEN = config.token
 
 client = discord.Client()
 

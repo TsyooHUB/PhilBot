@@ -2,9 +2,8 @@ import aiohttp
 import discord
 import io
 import config
-
+import Philbank
 from ImageHandler import juan_processing
-from Philbank import start_bank, add_philcoin, get_philcoin_balance
 
 BOT_PREFIX = ("!")
 TOKEN = config.token
@@ -41,8 +40,7 @@ async def on_message(message):
         return
 
     if command[0] == "philbalance":
-        await message.author.send(
-            f"User: {get_name_from_user_id(message.author.id)}, Balance: {get_philcoin_balance(message.author.id)}")
+        await message.author.send(Philbank.get_register(message.author.id))
     elif command[0] == "juan":
         async with aiohttp.ClientSession() as session:
             async with session.get(command[1]) as resp:
@@ -56,12 +54,16 @@ async def on_reaction_add(reaction, user):
     msg_author = reaction.message.author
     if str(reaction).index("philcoin") >= 0:
         if msg_author.id != user.id:
-            add_philcoin(msg_author.id, get_name_from_user_id(msg_author.id), 1)
+            Philbank.add_philcoin(msg_author.id, 1)
 
 
 @client.event
 async def on_ready():
     print('Phil Bot running')
-    print(start_bank())
+    print(Philbank.start_bank())
+    for user in client.users:
+        if not Philbank.register_exists(user.id):
+            Philbank.add_register(Philbank.Register(get_name_from_user_id(user.id), user.id, 0))
+    Philbank.save_philbank()
 
 client.run(TOKEN)

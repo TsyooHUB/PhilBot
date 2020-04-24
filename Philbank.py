@@ -27,22 +27,39 @@ class Register:
     def get_balance(self):
         return self.balance
 
+    def __str__(self):
+        return f"User: {self.get_name()}, Balance: {self.get_balance()}"
 
-def add_philcoin(user_id, name, amount):
+
+def register_exists(user_id):
+    for register in philbank:
+        if str(user_id) == str(register.get_id()):
+            return True
+    return False
+
+
+def add_register(register):
+    philbank.append(register)
+
+
+def get_register(user_id):
+    for register in philbank:
+        if str(user_id) == str(register.get_id()):
+            return register
+
+
+def add_philcoin(user_id, amount):
     for register in philbank:
         if user_id == register.get_id():
-            register.set_name(name)
             register.set_balance(register.get_balance()+int(amount))
             save_philbank()
             return
-    new_register = Register(name, user_id, amount)
-    philbank.append(new_register)
-    save_philbank()
+    print(f"User not found: {user_id}")
 
 
 def get_philcoin_balance(user_id):
     for register in philbank:
-        if str(user_id) == register.get_id():
+        if str(user_id) == str(register.get_id()):
             return register.get_balance()
     return -1
 
